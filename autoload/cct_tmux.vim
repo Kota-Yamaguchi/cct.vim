@@ -172,7 +172,7 @@ function! cct_tmux#start_claude() abort
   endif
   
   " Start Claude Code in the new pane
-  let l:claude_cmd = exists('g:claude_code_command') ? g:claude_code_command : 'claude code'
+  let l:claude_cmd = exists('g:claude_code_command') ? g:claude_code_command : 'claude'
   call system('tmux send-keys -t ' . l:new_pane . ' ' . shellescape(l:claude_cmd) . ' C-m')
   
   " Return focus to the original pane
