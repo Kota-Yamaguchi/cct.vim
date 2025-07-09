@@ -130,7 +130,7 @@ function! cct_auto_send#handle_enter() abort
   let s:last_sent_content = l:line_content
   
   " Show feedback
-  echom 'AutoSend: 送信完了 (' . expand('%:t') . ':' . l:current_line . ')'
+  echom 'AutoSend: 送信完了 (' . expand('%:p') . ':' . l:current_line . ')'
   
   " Execute normal Enter behavior
   return "\<CR>"
@@ -138,29 +138,56 @@ endfunction
 
 " Send line with AutoSend-specific prompt
 function! cct_auto_send#send_line_auto(line_num, line_content) abort
-  let l:filename = expand('%:t')
-  if empty(l:filename)
-    let l:filename = '[無題]'
+  let l:filepath = expand('%:p')
+  if empty(l:filepath)
+    let l:filepath = '[無題]'
   endif
   
   " Create AutoSend prompt
-  let l:prompt = cct_auto_send#create_auto_send_prompt(l:filename, a:line_content)
+  let l:prompt = cct_auto_send#create_auto_send_prompt(l:filepath, a:line_content)
   
   " Send with the prompt
   call cct_tmux#send_text(l:prompt)
   
   " Show minimal feedback
-  echom 'AutoSend: ' . l:filename . ':' . a:line_num
+  echom 'AutoSend: ' . l:filepath . ':' . a:line_num
 endfunction
 
 " Create AutoSend-specific prompt
-function! cct_auto_send#create_auto_send_prompt(filename, line_content) abort
-  let l:prompt = "ファイル: " . a:filename . "\n"
-  let l:prompt .= "モブプロ中です。以下の追加された一行について:\n"
-  let l:prompt .= "- 質問の場合は簡潔に答えてください\n"
-  let l:prompt .= "- コードの場合は簡潔にコメントしてください\n"
-  let l:prompt .= "- 回答はできるだけ短くしてください\n\n"
-  let l:prompt .= a:line_content
+function! cct_auto_send#create_auto_send_prompt(filepath, line_content) abort
+  " Always respond in Japanese
+  let l:prompt = "# Mob Programming Session\n\n"
+  let l:prompt .= "**Always Japanese**: Please respond in Japanese only.\n\n"
+  
+  " Context section with file path and content
+  let l:prompt .= "<context>\n"
+  let l:prompt .= "**File Path**: " . a:filepath . "\n\n"
+  
+  " Add file content if file exists and is readable
+  if filereadable(a:filepath)
+    try
+      let l:file_lines = readfile(a:filepath)
+      let l:prompt .= "**File Content**:\n"
+      let l:prompt .= "```\n"
+      let l:prompt .= join(l:file_lines, "\n")
+      let l:prompt .= "\n```\n"
+    catch
+      let l:prompt .= "**File Content**: (Read error)\n"
+    endtry
+  else
+    let l:prompt .= "**File Content**: (File not found)\n"
+  endif
+  let l:prompt .= "</context>\n\n"
+  
+  " Instructions
+  let l:prompt .= "## Instructions\n"
+  let l:prompt .= "We are in a mob programming session. About the following added line:\n"
+  let l:prompt .= "- If it's a question, please answer concisely\n"
+  let l:prompt .= "- If it's code, please comment concisely\n"
+  let l:prompt .= "- Keep your response as short as possible\n\n"
+  
+  " Target line
+  let l:prompt .= "**Target Line**: `" . a:line_content . "`"
   
   return l:prompt
 endfunction
