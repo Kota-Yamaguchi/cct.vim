@@ -1,0 +1,127 @@
+*cct.txt*	Claude Code Tmux - Vim から Claude Code にテキストを送信
+
+Author: Your Name
+License: MIT
+Version: 1.0.0
+
+==============================================================================
+CONTENTS						*cct-contents*
+
+    1. 概要 ............................ |cct-introduction|
+    2. 必要な依存関係 .................. |cct-requirements|
+    3. インストール .................... |cct-installation|
+    4. 使い方 .......................... |cct-usage|
+    5. コマンド ........................ |cct-commands|
+    6. キーマッピング .................. |cct-mappings|
+    7. AutoSendMode .................... |cct-autosend|
+    8. ライセンス ..................... |cct-license|
+
+==============================================================================
+1. 概要						*cct-introduction*
+
+cct.vim は Vim から tmux ペインの Claude Code にテキストを送信するプラグイン
+です。現在行や選択範囲を簡単に Claude Code に送信して、AI による支援を
+受けることができます。
+
+主な機能:
+- 現在行や選択範囲の送信
+- Claude Code の自動検出と起動
+- プロンプト付き送信
+- AutoSendMode による自動送信
+
+==============================================================================
+2. 必要な依存関係					*cct-requirements*
+
+以下のツールが必要です:
+
+- tmux
+- Claude Code
+- pstree
+
+インストール:
+>
+    brew install tmux pstree
+<
+
+==============================================================================
+3. インストール					*cct-installation*
+
+vim-plug を使用する場合:
+>
+    Plug 'Kota-Yamaguchi/cct.vim'
+<
+
+Vundle を使用する場合:
+>
+    Plugin 'Kota-Yamaguchi/cct.vim'
+<
+
+==============================================================================
+4. 使い方						*cct-usage*
+
+基本的な使い方:
+
+1. tmux セッション内で Vim を起動
+2. |:ClaudeCodeConnect| で Claude Code に接続
+3. Vim でコードや質問を書く
+4. |<Space>cc| で送信
+
+==============================================================================
+5. コマンド						*cct-commands*
+
+							*:ClaudeCodeConnect*
+:ClaudeCodeConnect
+		Claude Code に接続します。Claude Code が起動していない場合は
+		自動で起動し、すでに起動している場合は自動で検出します。
+
+							*:ClaudeCodeAutoSendToggle*
+:ClaudeCodeAutoSendToggle
+		AutoSendMode の有効/無効を切り替えます。
+
+							*:ClaudeCodeAutoSendStatus*
+:ClaudeCodeAutoSendStatus
+		AutoSendMode の現在の状態を表示します。
+
+==============================================================================
+6. キーマッピング					*cct-mappings*
+
+デフォルトのキーマッピング:
+
+						*<Space>cc*
+<Space>cc	現在行（Normal モード）または選択範囲（Visual モード）を
+		Claude Code に送信します。
+
+						*<Space>cp*
+<Space>cp	プロンプト付きで現在行または選択範囲を送信します。
+		送信前にプロンプトの入力を求められます。
+
+						*<Space>ca*
+<Space>ca	AutoSendMode の有効/無効を切り替えます。
+
+						*<Space>cA*
+<Space>cA	AutoSendMode の状態を確認します。
+
+==============================================================================
+7. AutoSendMode					*cct-autosend*
+
+AutoSendMode は Enter キーを押した時に現在行を自動的に Claude Code に
+送信する機能です。
+
+特徴:
+- カーソルが 2 秒以上滞在した行のみが送信対象
+- 空行や重複は自動的にスキップ
+- Enter キーの通常動作（改行）も同時に実行
+
+使用方法:
+1. |<Space>ca| で AutoSendMode を有効化
+2. コードや質問を入力
+3. Enter キーを押すと自動送信
+
+
+==============================================================================
+8. ライセンス					*cct-license*
+
+MIT License
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl: 
