@@ -13,7 +13,7 @@ let s:timer_id = 0
 let s:line_times = {}  " Dictionary to track time spent on each line
 let s:current_line = 0
 let s:line_start_time = 0
-let s:min_dwell_time = 2  " Minimum seconds to qualify for sending
+let s:min_dwell_time = 1  " Minimum seconds to qualify for sending
 
 " Get AutoSend mode status
 function! cct_auto_send#is_enabled() abort
@@ -115,7 +115,7 @@ function! cct_auto_send#handle_enter() abort
   " Cancel any existing timer
   call cct_auto_send#cancel_timer()
   
-  " Check if current line qualifies for sending (2+ seconds dwell time)
+  " Check if current line qualifies for sending 
   let l:line_time = cct_auto_send#get_line_time(l:current_line)
   if !cct_auto_send#line_qualifies_for_sending(l:current_line)
     echom 'AutoSend: 行 ' . l:current_line . ' は送信対象外（滞在時間: ' . l:line_time . 's / 必要: ' . s:min_dwell_time . 's）'
@@ -301,7 +301,7 @@ function! cct_auto_send#track_cursor_movement() abort
   let s:line_start_time = l:current_time
 endfunction
 
-" Check if a line qualifies for sending (2+ seconds dwell time)
+" Check if a line qualifies for sending
 function! cct_auto_send#line_qualifies_for_sending(line_num) abort
   " Update current line time before checking
   call cct_auto_send#update_current_line_time()
